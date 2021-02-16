@@ -2674,6 +2674,30 @@ static const char *GetMagickPropertyLetter(ImageInfo *image_info,
         image->magick_columns,(double) image->magick_rows);
       break;
     }
+    case 'F': /* TESTING - Image size as geometry = "%wx%h", but observe
+		 orientation, and swap if viewers are likely to rotate */
+    {
+      size_t w, h;
+
+      switch(image->orientation)
+      {
+	case LeftTopOrientation:
+	case RightTopOrientation:
+	case RightBottomOrientation:
+	case LeftBottomOrientation:
+	  w = image->magick_rows;
+	  h = image->magick_columns;
+	  break;
+	default:
+	  w = image->magick_columns;
+	  h = image->magick_rows;
+	  break;
+      }
+      WarnNoImageReturn("\"%%%c\"",letter);
+      (void) FormatLocaleString(value,MagickPathExtent,"%.20gx%.20g",(double)
+	w,(double) h);
+      break;
+    }
     case 'H': /* layer canvas height */
     {
       WarnNoImageReturn("\"%%%c\"",letter);
